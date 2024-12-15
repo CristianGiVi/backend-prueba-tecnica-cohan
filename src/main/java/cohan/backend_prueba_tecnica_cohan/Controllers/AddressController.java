@@ -35,17 +35,17 @@ public class AddressController {
                 return validation(bindingResult);
             }
             Map<String, Object> result = addressService.save(address);
-            if ((Boolean) result.get("state")){
-                response.put("state", "success");
+            if ((Boolean) result.get("status")){
+                response.put("status", "success");
                 response.put("address", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             } else {
-                response.put("state", "error");
+                response.put("status", "error");
                 response.put("message", result.get("result"));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (Exception e) {
-            response.put("state", false);
+            response.put("status", false);
             response.put("message", "Error interno del servidor: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -58,7 +58,6 @@ public class AddressController {
             String message = "El campo " + err.getField() + " " + err.getDefaultMessage();
             errors.put(err.getField(), message);
         });
-
         return ResponseEntity.badRequest().body(errors);
     }
 

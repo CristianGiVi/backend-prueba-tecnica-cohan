@@ -10,4 +10,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     Optional<Person> findByEmailAddress(String email);
 
     Optional<Person> findByAddress_Id(Long addresId);
+
+    Optional<Person> findByPhoneNumber(String phoneNumber);
 }

@@ -17,9 +17,11 @@ public abstract class Person {
     @NotBlank
     private String name;
 
+    @Column(unique = true)
     @NotBlank
     private String phoneNumber;
 
+    @Column(unique = true)
     @NotBlank
     private String emailAddress;
 

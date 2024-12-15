@@ -9,6 +9,7 @@ import java.util.List;
 @Table(name = "student")
 public class Student extends Person{
 
+    @Column(unique = true)
     @NotBlank
     private String studentNumber;
 

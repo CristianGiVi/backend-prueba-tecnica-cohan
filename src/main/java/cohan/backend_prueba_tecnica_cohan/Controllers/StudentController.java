@@ -35,16 +35,16 @@ public class StudentController {
                 return validation(bindingResult);
             }
             Map<String, Object> result = studentService.save(student);
-            if ((Boolean) result.get("state")){
-                response.put("state", "success");
+            if ((Boolean) result.get("status")){
+                response.put("status", "success");
                 response.put("student", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
-            response.put("state", "error");
+            response.put("status", "error");
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (RuntimeException e) {
-            response.put("state", false);
+            response.put("status", false);
             response.put("message", "Error interno del servidor: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -61,17 +61,17 @@ public class StudentController {
             }
 
             Map<String, Object> result = studentService.update(student, id);
-            if ((Boolean) result.get("state")){
-                response.put("state", "success");
+            if ((Boolean) result.get("status")){
+                response.put("status", "success");
                 response.put("student", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("state", "error");
+            response.put("status", "error");
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
         } catch (RuntimeException e) {
-            response.put("state", false);
+            response.put("status", false);
             response.put("message", "Error interno del servidor: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -84,16 +84,16 @@ public class StudentController {
         Map<String, Object> response = new HashMap<>();
         try{
             Map<String, Object> result = studentService.delete(id);
-            if ((Boolean) result.get("state")){
-                response.put("state", "success");
+            if ((Boolean) result.get("status")){
+                response.put("status", "success");
                 response.put("message", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("state", "error");
+            response.put("status", "error");
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (RuntimeException e) {
-            response.put("state", false);
+            response.put("status", false);
             response.put("message", "Error interno del servidor: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

@@ -29,13 +29,13 @@ public class AddressServiceImpl implements AddressService{
         try {
             Map<String, Object> response = new HashMap<>();
             if (validateUniqueAddress(address.getPostalCode(), address.getStreet(), address.getCountry())){
-                response.put("state", false);
+                response.put("status", false);
                 response.put("result", "La direccion ya esta registrada");
                 return response;
             }
 
             Address newAddress = addressRepository.save(address);
-            response.put("state", true);
+            response.put("status", true);
             response.put("result", newAddress);
             return response;
         } catch (RuntimeException e) {

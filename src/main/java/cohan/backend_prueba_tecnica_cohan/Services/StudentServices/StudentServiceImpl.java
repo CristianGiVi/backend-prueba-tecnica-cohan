@@ -38,25 +38,44 @@ public class StudentServiceImpl implements StudentService {
     public Map<String, Object> save(Student student) {
         Map<String, Object> response = new HashMap<>();
         try{
-            Optional<Person> foundEmailAddress = personRepository.findByEmailAddress(student.getEmailAddress());
-            if (foundEmailAddress.isPresent()){
-                response.put("state", false);
+            Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(student.getEmailAddress());
+            if (personFoundByEmailAddress.isPresent()){
+                response.put("status", false);
                 response.put("result", "Ya existe un estudiante registrado con esta direccion de correo");
                 return response;
             }
+
+            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(student.getPhoneNumber());
+            if (personFoundByPhoneNumber.isPresent()){
+                response.put("status", false);
+                response.put("result", "Ya existe un estudiante registrado con este numero de celular");
+                return response;
+            }
+
+            Optional<Student> studentFoundByStudentNumber = studentRepository.findByStudentNumber(student.getStudentNumber());
+            if (studentFoundByStudentNumber.isPresent()){
+                response.put("status", false);
+                response.put("result", "Ya existe un estudiante registrado con esta identificacion");
+                return response;
+            }
+
             Optional<Address> foundAddress = addressRepository.findById(student.getAddress().getId());
             if(foundAddress.isEmpty()){
-                response.put("state", false);
+                response.put("status", false);
                 response.put("result", "No existe la direccion ingresada");
                 return response;
             }
             Optional<Person> foundUsedAddress = personRepository.findByAddress_Id(student.getAddress().getId());
             if(foundUsedAddress.isPresent()){
-                response.put("state", false);
+                response.put("status", false);
                 response.put("result", "Ya existe un estudiante registrado en esta direccion");
                 return response;
             }
+
+
+
             Student newStudent = studentRepository.save(student);
+            response.put("status", true);
             response.put("result", newStudent);
             return response;
         } catch (RuntimeException e) {
@@ -69,36 +88,53 @@ public class StudentServiceImpl implements StudentService {
     public Map<String, Object> update(Student student, Long id) {
         Map<String, Object> response = new HashMap<>();
         try{
-            Optional<Student> foundStudent = studentRepository.findById(id);
-            if(foundStudent.isEmpty()){
-                response.put("state", false);
+            Optional<Student> currentStudent = studentRepository.findById(id);
+            if(currentStudent.isEmpty()){
+                response.put("status", false);
                 response.put("result", "No existe el estudiante ingresado");
                 return response;
             }
 
             Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(student.getEmailAddress());
-            if (personFoundByEmailAddress.isPresent() &&
-                    !foundStudent.get().getEmailAddress().equals(personFoundByEmailAddress.get().getEmailAddress())){
+            if (personFoundByEmailAddress.isPresent()){
 
-                response.put("state", false);
-                response.put("result", "Ya existe un estudiante registrado con esta direccion de correo");
+                if(!personFoundByEmailAddress.get().getEmailAddress().equals(currentStudent.get().getEmailAddress())){
+                    response.put("status", false);
+                    response.put("result", "Ya existe un estudiante registrado con esta direccion de correo");
+                    return response;
+                }
+            }
+
+            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(student.getPhoneNumber());
+            if (personFoundByPhoneNumber.isPresent()){
+                response.put("status", false);
+                response.put("result", "Ya existe un estudiante registrado con este numero de celular");
                 return response;
             }
+
+            Optional<Student> studentFoundByStudentNumber = studentRepository.findByStudentNumber(student.getStudentNumber());
+            if (studentFoundByStudentNumber.isPresent()){
+                response.put("status", false);
+                response.put("result", "Ya existe un estudiante registrado con esta identificacion");
+                return response;
+            }
+
             Optional<Address> foundAddress = addressRepository.findById(student.getAddress().getId());
             if(foundAddress.isEmpty()){
-                response.put("state", false);
+                response.put("status", false);
                 response.put("result", "No existe la direccion ingresada");
                 return response;
             }
             Optional<Person> personFoundByAddressId = personRepository.findByAddress_Id(student.getAddress().getId());
-            if(personFoundByAddressId.isPresent()
-                && !foundStudent.get().getId().equals(personFoundByAddressId.get().getId())){
-                response.put("state", false);
-                response.put("result", "Ya existe un estudiante registrado en esta direccion");
-                return response;
+            if(personFoundByAddressId.isPresent()){
+                if(!currentStudent.get().getAddress().getId().equals(student.getAddress().getId())){
+                    response.put("status", false);
+                    response.put("result", "Ya existe un estudiante registrado en esta direccion");
+                    return response;
+                }
             }
 
-            Student studentDB = foundStudent.get();
+            Student studentDB = currentStudent.get();
 
             studentDB.setStudentNumber(student.getStudentNumber());
             studentDB.setAverageMark(student.getAverageMark());
@@ -107,7 +143,9 @@ public class StudentServiceImpl implements StudentService {
             studentDB.setPhoneNumber(student.getPhoneNumber());
             studentDB.setName(student.getName());
 
-            response.put("result", studentRepository.save(studentDB));
+            Student updatedStudent = studentRepository.save(studentDB);
+            response.put("status", true);
+            response.put("result", updatedStudent);
             return response;
         } catch (RuntimeException e) {
             throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
@@ -121,20 +159,17 @@ public class StudentServiceImpl implements StudentService {
             Map<String, Object> response = new HashMap<>();
             Optional<Student> foundStudent = studentRepository.findById(id);
             if(foundStudent.isEmpty()){
-                response.put("state", false);
+                response.put("status", false);
                 response.put("result", "No existe el estudiante ingresado");
                 return response;
             }
             studentRepository.deleteById(id);
-            response.put("state", true);
+            response.put("status", true);
             response.put("result", "Estudiante eliminado con exito");
             return response;
         } catch (RuntimeException e) {
             throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
         }
-
-
     }
-
 
 }
