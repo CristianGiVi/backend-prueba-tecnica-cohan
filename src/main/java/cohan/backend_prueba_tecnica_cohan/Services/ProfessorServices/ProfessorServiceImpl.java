@@ -1,11 +1,11 @@
-package cohan.backend_prueba_tecnica_cohan.Services.StudentServices;
+package cohan.backend_prueba_tecnica_cohan.Services.ProfessorServices;
 
 import cohan.backend_prueba_tecnica_cohan.Models.Address;
 import cohan.backend_prueba_tecnica_cohan.Models.Person;
-import cohan.backend_prueba_tecnica_cohan.Models.Student;
+import cohan.backend_prueba_tecnica_cohan.Models.Professor;
 import cohan.backend_prueba_tecnica_cohan.Repositories.AddressRepository;
 import cohan.backend_prueba_tecnica_cohan.Repositories.PersonRepository;
-import cohan.backend_prueba_tecnica_cohan.Repositories.StudentRepository;
+import cohan.backend_prueba_tecnica_cohan.Repositories.ProfessorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class StudentServiceImpl implements StudentService {
+public class ProfessorServiceImpl implements ProfessorService {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private ProfessorRepository professorRepository;
 
     @Autowired
     private PersonRepository personRepository;
@@ -29,51 +29,45 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Student> findAll() {
-        return (List<Student>) studentRepository.findAll();
+    public List<Professor> findAll() {
+        return (List<Professor>) professorRepository.findAll();
     }
 
     @Transactional
     @Override
-    public Map<String, Object> save(Student student) {
+    public Map<String, Object> save(Professor professor) {
         Map<String, Object> response = new HashMap<>();
         try{
-            Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(student.getEmailAddress());
+            Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(professor.getEmailAddress());
             if (personFoundByEmailAddress.isPresent()){
                 response.put("status", false);
                 response.put("result", "Ya existe una persona registrada con esta direccion de correo");
                 return response;
             }
 
-            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(student.getPhoneNumber());
+            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(professor.getPhoneNumber());
             if (personFoundByPhoneNumber.isPresent()){
                 response.put("status", false);
                 response.put("result", "Ya existe una persona registrada con este numero de celular");
                 return response;
             }
 
-            Optional<Student> studentFoundByStudentNumber = studentRepository.findByStudentNumber(student.getStudentNumber());
-            if (studentFoundByStudentNumber.isPresent()){
-                response.put("status", false);
-                response.put("result", "Ya existe un estudiante registrado con esta identificacion");
-                return response;
-            }
-
-            Optional<Address> foundAddress = addressRepository.findById(student.getAddress().getId());
+            Optional<Address> foundAddress = addressRepository.findById(professor.getAddress().getId());
             if(foundAddress.isEmpty()){
                 response.put("status", false);
                 response.put("result", "No existe la direccion ingresada");
                 return response;
             }
-            Optional<Person> foundUsedAddress = personRepository.findByAddress_Id(student.getAddress().getId());
+            Optional<Person> foundUsedAddress = personRepository.findByAddress_Id(professor.getAddress().getId());
             if(foundUsedAddress.isPresent()){
                 response.put("status", false);
                 response.put("result", "Ya existe una persona registrada en esta direccion");
                 return response;
             }
-            Student newStudent = studentRepository.save(student);
+
+            Professor newProfessor = professorRepository.save(professor);
             response.put("status", true);
-            response.put("result", newStudent);
+            response.put("result", newProfessor);
             return response;
         } catch (RuntimeException e) {
             throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
@@ -82,73 +76,64 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public Map<String, Object> update(Student student, Long id) {
+    public Map<String, Object> update(Professor professor, Long id) {
         Map<String, Object> response = new HashMap<>();
         try{
-            Optional<Student> currentStudent = studentRepository.findById(id);
-            if(currentStudent.isEmpty()){
+            Optional<Professor> currentProfessor = professorRepository.findById(id);
+            if(currentProfessor.isEmpty()){
                 response.put("status", false);
-                response.put("result", "No existe el estudiante ingresado");
+                response.put("result", "No existe el profesor ingresado");
                 return response;
             }
 
-            Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(student.getEmailAddress());
+            Optional<Person> personFoundByEmailAddress = personRepository.findByEmailAddress(professor.getEmailAddress());
             if (personFoundByEmailAddress.isPresent()){
 
-                if(!personFoundByEmailAddress.get().getEmailAddress().equals(currentStudent.get().getEmailAddress())){
+                if(!personFoundByEmailAddress.get().getEmailAddress().equals(currentProfessor.get().getEmailAddress())){
                     response.put("status", false);
                     response.put("result", "Ya existe una persona registrada con esta direccion de correo");
                     return response;
                 }
             }
 
-            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(student.getPhoneNumber());
+            Optional<Person> personFoundByPhoneNumber = personRepository.findByPhoneNumber(professor.getPhoneNumber());
             if (personFoundByPhoneNumber.isPresent()){
-                if(!personFoundByPhoneNumber.get().getPhoneNumber().equals(currentStudent.get().getPhoneNumber())){
+                if(!personFoundByPhoneNumber.get().getPhoneNumber().equals(currentProfessor.get().getPhoneNumber())){
                     response.put("status", false);
                     response.put("result", "Ya existe una persona registrada con este numero de celular");
                     return response;
                 }
-            }
-
-            Optional<Student> studentFoundByStudentNumber = studentRepository.findByStudentNumber(student.getStudentNumber());
-            if (studentFoundByStudentNumber.isPresent()){
-                if(!studentFoundByStudentNumber.get().getStudentNumber().equals(currentStudent.get().getStudentNumber())){
-                    response.put("status", false);
-                    response.put("result", "Ya existe una persona registrada con esta identificacion");
-                    return response;
-                }
 
             }
 
-            Optional<Address> foundAddress = addressRepository.findById(student.getAddress().getId());
+            Optional<Address> foundAddress = addressRepository.findById(professor.getAddress().getId());
             if(foundAddress.isEmpty()){
                 response.put("status", false);
                 response.put("result", "No existe la direccion ingresada");
                 return response;
             }
-            Optional<Person> personFoundByAddressId = personRepository.findByAddress_Id(student.getAddress().getId());
+            Optional<Person> personFoundByAddressId = personRepository.findByAddress_Id(professor.getAddress().getId());
             if(personFoundByAddressId.isPresent()){
-                if(!currentStudent.get().getAddress().getId().equals(student.getAddress().getId())){
+                if(!currentProfessor.get().getAddress().getId().equals(professor.getAddress().getId())){
                     response.put("status", false);
                     response.put("result", "Ya existe una persona registrada en esta direccion");
                     return response;
                 }
             }
 
-            Student studentDB = currentStudent.get();
+            Professor professorDB = currentProfessor.get();
 
-            studentDB.setStudentNumber(student.getStudentNumber());
-            studentDB.setAverageMark(student.getAverageMark());
-            studentDB.setAddress(student.getAddress());
-            studentDB.setEmailAddress(student.getEmailAddress());
-            studentDB.setPhoneNumber(student.getPhoneNumber());
-            studentDB.setName(student.getName());
+            professorDB.setAddress(professor.getAddress());
+            professorDB.setEmailAddress(professor.getEmailAddress());
+            professorDB.setPhoneNumber(professor.getPhoneNumber());
+            professorDB.setName(professor.getName());
+            professorDB.setSalary(professor.getSalary());
 
-            Student updatedStudent = studentRepository.save(studentDB);
+            Professor updatedProfessor = professorRepository.save(professorDB);
             response.put("status", true);
-            response.put("result", updatedStudent);
+            response.put("result", updatedProfessor);
             return response;
+
         } catch (RuntimeException e) {
             throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
         }
@@ -159,19 +144,18 @@ public class StudentServiceImpl implements StudentService {
     public Map<String, Object> delete(Long id) {
         try{
             Map<String, Object> response = new HashMap<>();
-            Optional<Student> foundStudent = studentRepository.findById(id);
-            if(foundStudent.isEmpty()){
+            Optional<Professor> foundProfessor = professorRepository.findById(id);
+            if(foundProfessor.isEmpty()){
                 response.put("status", false);
-                response.put("result", "No existe el estudiante ingresado");
+                response.put("result", "No existe el profesor ingresado");
                 return response;
             }
-            studentRepository.deleteById(id);
+            professorRepository.deleteById(id);
             response.put("status", true);
-            response.put("result", "Estudiante eliminado con exito");
+            response.put("result", "Profesor eliminado con exito");
             return response;
         } catch (RuntimeException e) {
             throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
         }
     }
-
 }

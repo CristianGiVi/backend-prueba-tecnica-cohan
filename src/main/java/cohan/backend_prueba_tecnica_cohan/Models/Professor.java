@@ -9,7 +9,7 @@ public class Professor extends Person{
 
     @NotNull
     @Min(0)
-    private int salary;
+    private Integer salary;
 
     public Professor() {
     }

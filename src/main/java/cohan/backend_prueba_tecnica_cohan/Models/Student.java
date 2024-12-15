@@ -16,7 +16,7 @@ public class Student extends Person{
     @NotNull
     @Min(0)
     @Max(5)
-    private float averageMark;
+    private Float averageMark;
 
     public Student() {
     }
