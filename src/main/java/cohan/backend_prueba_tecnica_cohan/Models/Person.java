@@ -1,9 +1,12 @@
 package cohan.backend_prueba_tecnica_cohan.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "person")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
 
@@ -20,6 +23,7 @@ public abstract class Person {
     @NotBlank
     private String emailAddress;
 
+    @NotNull
     @OneToOne
     private Address address;
 

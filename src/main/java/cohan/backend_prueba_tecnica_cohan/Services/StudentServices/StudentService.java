@@ -1,13 +1,9 @@
 package cohan.backend_prueba_tecnica_cohan.Services.StudentServices;
 
 import cohan.backend_prueba_tecnica_cohan.Models.Student;
+import cohan.backend_prueba_tecnica_cohan.Services.PersonServices.PersonService;
 
-import java.util.List;
-import java.util.Map;
+public interface StudentService extends PersonService<Student> {
 
-public interface StudentService {
 
-    List<Student> findAll();
-
-    Map<String, Object> save(Student student);
 }

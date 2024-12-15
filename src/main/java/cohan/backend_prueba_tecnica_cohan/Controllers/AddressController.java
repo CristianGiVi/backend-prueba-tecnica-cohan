@@ -31,11 +31,9 @@ public class AddressController {
     public ResponseEntity<?> generateAddress(@Valid @RequestBody Address address, BindingResult bindingResult){
         Map<String, Object> response = new HashMap<>();
         try{
-
             if(bindingResult.hasFieldErrors()){
                 return validation(bindingResult);
             }
-
             Map<String, Object> result = addressService.save(address);
             if ((Boolean) result.get("state")){
                 response.put("state", "success");

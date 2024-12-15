@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
+@Table(name = "student")
 public class Student extends Person{
 
     @NotBlank
