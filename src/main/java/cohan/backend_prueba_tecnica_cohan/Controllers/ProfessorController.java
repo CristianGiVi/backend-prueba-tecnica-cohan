@@ -39,7 +39,7 @@ public class ProfessorController {
 
             Map<String, Object> result = professorService.save(professor);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("student", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }

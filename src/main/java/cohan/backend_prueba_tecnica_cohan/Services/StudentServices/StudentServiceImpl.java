@@ -33,6 +33,24 @@ public class StudentServiceImpl implements StudentService {
         return (List<Student>) studentRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> findStudent( Long id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Optional<Student> currentStudent = studentRepository.findById(id);
+            if(currentStudent.isEmpty()){
+                response.put("status", false);
+                response.put("result", "No existe el estudiante ingresado");
+                return response;
+            }
+            response.put("status", true);
+            response.put("result", currentStudent.get());
+            return response;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
+        }
+    }
+
     @Transactional
     @Override
     public Map<String, Object> save(Student student) {

@@ -26,6 +26,25 @@ public class StudentController {
         List<Student> students = studentService.findAll();
         return ResponseEntity.ok(students);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getStudent(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Map<String, Object> result = studentService.findStudent(id);
+            if ((Boolean) result.get("status")){
+                response.put("status", true);
+                response.put("student", result.get("result"));
+                return ResponseEntity.ok(response);
+            }
+            response.put("status", false);
+            response.put("message", result.get("result"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (RuntimeException e) {
+            response.put("status", false);
+            response.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
     @PostMapping("/new-student")
     public ResponseEntity<?> generateStudent(@Valid @RequestBody Student student, BindingResult bindingResult){
