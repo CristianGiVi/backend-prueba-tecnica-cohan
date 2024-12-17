@@ -26,7 +26,7 @@ public abstract class Person {
     private String emailAddress;
 
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Address address;
 
     public Person() {
