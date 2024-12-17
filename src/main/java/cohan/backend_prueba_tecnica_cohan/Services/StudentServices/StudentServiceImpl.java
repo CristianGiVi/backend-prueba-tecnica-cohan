@@ -184,6 +184,7 @@ public class StudentServiceImpl implements StudentService {
                 return response;
             }
             studentRepository.deleteById(id);
+            addressRepository.deleteById(foundStudent.get().getAddress().getId());
             response.put("status", true);
             response.put("result", "Estudiante eliminado con exito");
             return response;

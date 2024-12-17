@@ -55,11 +55,11 @@ public class StudentController {
             }
             Map<String, Object> result = studentService.save(student);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("student", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (RuntimeException e) {
@@ -81,11 +81,11 @@ public class StudentController {
 
             Map<String, Object> result = studentService.update(student, id);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("student", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
@@ -104,11 +104,11 @@ public class StudentController {
         try{
             Map<String, Object> result = studentService.delete(id);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("message", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (RuntimeException e) {

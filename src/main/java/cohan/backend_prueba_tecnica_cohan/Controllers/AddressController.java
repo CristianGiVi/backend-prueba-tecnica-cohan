@@ -36,11 +36,11 @@ public class AddressController {
             }
             Map<String, Object> result = addressService.save(address);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("address", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             } else {
-                response.put("status", "error");
+                response.put("status", false);
                 response.put("message", result.get("result"));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
@@ -50,6 +50,51 @@ public class AddressController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
+    }
+
+    @PutMapping("/edit-address/{id}")
+    public ResponseEntity<?> editAddress(@PathVariable Long id, @Valid @RequestBody Address address, BindingResult bindingResult){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            if(bindingResult.hasFieldErrors()){
+                return validation(bindingResult);
+            }
+            Map<String, Object> result = addressService.update(address, id);
+            if ((Boolean) result.get("status")){
+                response.put("status", true);
+                response.put("address", result.get("result"));
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else {
+                response.put("status", false);
+                response.put("message", result.get("result"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+        } catch (RuntimeException e) {
+            response.put("status", false);
+            response.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @DeleteMapping("/delete-address/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Map<String, Object> result = addressService.delete(id);
+            if ((Boolean) result.get("status")){
+                response.put("status", true);
+                response.put("message", result.get("result"));
+                return ResponseEntity.ok(response);
+            }
+            response.put("status", false);
+            response.put("message", result.get("result"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (RuntimeException e) {
+            response.put("status", false);
+            response.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     private ResponseEntity<?> validation(BindingResult result){

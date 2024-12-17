@@ -11,4 +11,7 @@ public interface AddressService {
 
     Map<String, Object> save(Address address);
 
+    Map<String, Object> update(Address address, Long id);
+
+    Map<String, Object> delete(Long id);
 }

@@ -43,7 +43,7 @@ public class ProfessorController {
                 response.put("student", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
@@ -66,11 +66,11 @@ public class ProfessorController {
 
             Map<String, Object> result = professorService.update(professor, id);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("professor", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
@@ -88,11 +88,11 @@ public class ProfessorController {
         try{
             Map<String, Object> result = professorService.delete(id);
             if ((Boolean) result.get("status")){
-                response.put("status", "success");
+                response.put("status", true);
                 response.put("message", result.get("result"));
                 return ResponseEntity.ok(response);
             }
-            response.put("status", "error");
+            response.put("status", false);
             response.put("message", result.get("result"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (RuntimeException e) {
