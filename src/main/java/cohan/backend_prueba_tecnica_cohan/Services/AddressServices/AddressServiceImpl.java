@@ -54,6 +54,18 @@ public class AddressServiceImpl implements AddressService{
                 return response;
             }
 
+            Optional<Address> foundAddress = addressRepository.findByPostalCodeAndStreetAndCountry(
+                    address.getPostalCode(), address.getStreet(), address.getCountry());
+
+
+            if(foundAddress.isPresent()){
+                if(!currentAddress.get().getId().equals(foundAddress.get().getId())){
+                    response.put("status", false);
+                    response.put("result", "La direccion ya esta registrada");
+                    return response;
+                }
+            }
+
             Address addressDB = currentAddress.get();
 
             addressDB.setCountry(address.getCountry());
