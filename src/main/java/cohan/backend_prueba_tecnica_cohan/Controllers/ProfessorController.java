@@ -29,6 +29,26 @@ public class ProfessorController {
         return ResponseEntity.ok(professors);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProfessor(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Map<String, Object> result = professorService.findProfessor(id);
+            if ((Boolean) result.get("status")){
+                response.put("status", true);
+                response.put("professor", result.get("result"));
+                return ResponseEntity.ok(response);
+            }
+            response.put("status", false);
+            response.put("message", result.get("result"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (RuntimeException e) {
+            response.put("status", false);
+            response.put("message", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     @PostMapping("/new-professor")
     public ResponseEntity<?> generateProfessor(@Valid @RequestBody Professor professor, BindingResult bindingResult){
         Map<String, Object> response = new HashMap<>();
@@ -40,7 +60,7 @@ public class ProfessorController {
             Map<String, Object> result = professorService.save(professor);
             if ((Boolean) result.get("status")){
                 response.put("status", true);
-                response.put("student", result.get("result"));
+                response.put("professor", result.get("result"));
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
             response.put("status", false);

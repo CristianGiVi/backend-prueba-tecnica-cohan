@@ -3,6 +3,7 @@ package cohan.backend_prueba_tecnica_cohan.Services.ProfessorServices;
 import cohan.backend_prueba_tecnica_cohan.Models.Address;
 import cohan.backend_prueba_tecnica_cohan.Models.Person;
 import cohan.backend_prueba_tecnica_cohan.Models.Professor;
+import cohan.backend_prueba_tecnica_cohan.Models.Student;
 import cohan.backend_prueba_tecnica_cohan.Repositories.AddressRepository;
 import cohan.backend_prueba_tecnica_cohan.Repositories.PersonRepository;
 import cohan.backend_prueba_tecnica_cohan.Repositories.ProfessorRepository;
@@ -31,6 +32,24 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     public List<Professor> findAll() {
         return (List<Professor>) professorRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> findProfessor( Long id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Optional<Professor> currentProfessor = professorRepository.findById(id);
+            if(currentProfessor.isEmpty()){
+                response.put("status", false);
+                response.put("result", "No existe el profesor ingresado");
+                return response;
+            }
+            response.put("status", true);
+            response.put("result", currentProfessor.get());
+            return response;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Ocurrió un error interno: " + e.getMessage());
+        }
     }
 
     @Transactional
